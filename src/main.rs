@@ -29,13 +29,19 @@ fn main() {
                                         None, None, None, None));
                    } else {
                        let di = dates::DateIterator::new(|&x| x.checked_add(chrono::Duration::days(1)));
-                       let ds: Vec<_> = di.take(30).collect();
+                       let ds: Vec<_> = di.take(28).collect();
 
-                       //let mut kb = vec![vec![]];
+                       let mut kb: Vec<Vec<String>> = Vec::new();
+                       for (i, d) in ds.into_iter().enumerate() {
+                           let row = i / 7;
+                           if kb.len() < row+1 {
+                               kb.push(Vec::new());
+                           }
+                           kb[row].push(d.format("%d %b").to_string());
+                       }
 
                        let keyboard = ReplyKeyboardMarkup {
-                           keyboard: vec![vec!["1".into(), "2".into(), "3".into(), "4".into()],
-                                     vec!["Yes".into(), "No".into()]],
+                           keyboard: kb,
                             one_time_keyboard: Some(true),
                             .. Default::default()
                        };
