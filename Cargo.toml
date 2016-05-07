@@ -1,0 +1,8 @@
+[package]
+name = "dragman_bot"
+version = "0.1.0"
+authors = ["nitrous"]
+
+[dependencies]
+telegram-bot = "0.4"
+chrono = "0.2"
