@@ -2,8 +2,9 @@
 extern crate telegram_bot;
 extern crate chrono;
 
+mod dates;
+
 use telegram_bot::*;
-use std::ops::*;
 
 fn main() {
     let api = Api::from_token("125119585:AAFmq_oBJQdlkqPqSXZ2Ml7qMVv_paa0mQc").unwrap();
@@ -27,6 +28,11 @@ fn main() {
                                         format!("Go away, Beardo."),
                                         None, None, None, None));
                    } else {
+                       let di = dates::DateIterator::new(|&x| x.checked_add(chrono::Duration::days(1)));
+                       let ds: Vec<_> = di.take(30).collect();
+
+                       //let mut kb = vec![vec![]];
+
                        let keyboard = ReplyKeyboardMarkup {
                            keyboard: vec![vec!["1".into(), "2".into(), "3".into(), "4".into()],
                                      vec!["Yes".into(), "No".into()]],
@@ -50,33 +56,4 @@ fn main() {
     if let Err(e) = res {
         println!("An error occured: {}", e);
     }
-}
-
-#[derive(Display, Debug)]
-struct DateCollector {
-    curr: chrono::NaiveDate,
-    next: chrono::NaiveDate,
-}
-
-impl Iterator for DateCollector {
-    type Item = chrono::NaiveDate;
-
-    fn next(&mut self) -> Option<chrono::NaiveDate> {
-        let new_next = self.curr.add(chrono::Duration::days(1));
-
-        self.curr = self.next;
-        self.next = new_next;
-
-        Some(self.curr)
-    }
-}
-
-#[test]
-fn it_works()
-{
-    let test_date = chrono::Local::today().naive_local();
-    let mut d = DateCollector { curr: test_date, next: test_date };
-    assert_eq!(chrono::Local::today().naive_local(), d.next().unwrap());
-    assert_eq!(chrono::Local::today().naive_local().add(chrono::Duration::days(1)), d.next().unwrap());
-    println!("{:?}", d)
 }
